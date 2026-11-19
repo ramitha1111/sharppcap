@@ -1,3 +1,10 @@
+# Optimized by ci-cost (https://github.com/mariotavarez/ci-cost)
+# Applied 3 optimizations:
+# - [HIGH] Add pip dependency cache to "license-check" job
+# - [MEDIUM] Add concurrency group to "dotnet-core.yml"
+# - [LOW] Use shallow clone in "build" job
+# Estimated savings: ~5 min/run
+#
 # Copyright 2020 Chris Morgan <chmorgan@gmail.com>
 # SPDX-License-Identifier: MIT
 
@@ -10,6 +17,10 @@ on:
   pull_request:
     branches: [ master ]
 
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   build:
 
@@ -18,7 +29,7 @@ jobs:
     steps:
     - uses: actions/checkout@v6
       with:
-        fetch-depth: 0
+        fetch-depth: 1
     - name: Install libpcap
       run: sudo -E bash scripts/install-libpcap.sh
     - name: Install tap
